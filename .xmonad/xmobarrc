@@ -1,0 +1,80 @@
+-- xmobar configuration file
+--
+-- Mess with this file to change the appearance of the contents of the
+-- status bar which are not directly controlled by xmonad. You can see your
+-- changes immediately by recompiling xmonad using "super-q".
+--
+-- There's a lot you can do here. Refer to "man xmobar".
+--
+-- Author: David Brewer
+-- Repository: https://github.com/davidbrewer/xmonad-ubuntu-conf
+
+
+Config {
+  -- Set font and default foreground/background colors. Note that
+  -- the height of xmobar is controlled by the font you use.
+  font = "xft:Ubuntu Mono-14",
+  bgColor = "black",
+  fgColor = "grey",
+
+  -- Position is top left, taking up 95% of screen.
+  -- You are likely to have to tweak the width here based on the width
+  -- of your screen to make it play nicely with stalonetray, which we
+  -- want to be taking up the remainer of the space on the right side
+  -- of your screen.
+  position = TopW L 95,
+
+  -- list of commands which gather information about your system for
+  -- presentation in the bar.
+  commands = [
+    -- Gather and format CPU usage information.
+    -- If it's above 50%, we consider it high usage and make it red.
+--    Run MultiCpu [
+--      "-H","50",
+--      "--high","red"
+--    ] 10,
+
+    Run MultiCpu ["-t","Cpu: <total0> <total1> <total2> <total3>","-L","30","-H","60","-h","#FFEB3B","-l","#CDDC39","-n","#ABF42B","-w","3"] 10,
+
+--    ,Run MultiCpu [ "--template" , "<autototal>"
+--            , "--Low"      , "50"         -- units: %
+--            , "--High"     , "85"         -- units: %
+--            , "--low"      , "gray"
+--            , "--normal"   , "darkorange"
+--            , "--high"     , "darkred"
+--            , "-c"         , " "
+--            , "-w"         , "3"
+--        ] 10,
+
+    -- Gather and format memory usage information
+    Run Memory [
+      "-t","Mem: <usedratio>%"
+    ] 10,
+
+    -- Date formatting
+    Run Date "%a %b %_d %l:%M:%S" "date" 10,
+
+    Run Weather "UKKK" ["-t","<tempC>C <skyCondition>","-L","64","-H","77","-n","#00880A","-h","#88B6B0","-l","#536DFE"] 36000,
+
+    -- To get volume information, we run a custom bash script.
+    -- This is because the built-in volume support in xmobar is disabled
+    -- in Debian and derivatives like Ubuntu.
+    -- Run Com "/bin/bash" ["-c", "~/.xmonad/get-volume"] "myvolume" 10,
+    Run Com "/bin/bash" ["-c", "~/.xmonad/getvolume.sh"] "myvolume" 10,
+
+    -- This line tells xmobar to read input from stdin. That's how we
+    -- get the information that xmonad is sending it for display.
+    Run StdinReader
+   ],
+
+   -- Separator character used to wrape variables in the xmobar template
+   sepChar = "%",
+
+   -- Alignment separater characer used in the xmobar template. Everything
+   -- before this will be aligned left, everything after aligned right.
+   alignSep = "}{",
+
+   -- Overall template for the layout of the xmobar contents. Note that
+   -- space is significant and can be used to add padding.
+   template = "%StdinReader% }{  %multicpu% | %memory% | Vol: %myvolume% | <fc=#e6744c>%date%</fc> | %UKKK%   "
+}
